@@ -1,0 +1,17 @@
+{
+	"pages": [
+		{
+			"path": "pages/index"
+		},
+		{
+			"path": "pages/page"
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "讯高小程序系统",
+		"navigationBarBackgroundColor": "#2277ff",
+		"backgroundColor": "#2277ff"
+	},
+	"uniIdRouter": {}
+}
