@@ -16,6 +16,7 @@
 			<xg-custom class="block block-custom" v-if="blocki.block=='custom'" :data-bid="blocki.bid" :data-block="blocki.block" :blockdata="blocki" :contdata="cont"></xg-custom>
 			<xg-icon class="block block-icon" v-if="blocki.block=='icon'" :data-bid="blocki.bid" :data-block="blocki.block" :blockdata="blocki" :contdata="cont"></xg-icon>
 			<xg-comment class="block block-comment" v-if="blocki.block=='comment'" :data-bid="blocki.bid" :data-block="blocki.block" :blockdata="blocki"></xg-comment>
+			<xg-cart class="block block-cart" v-if="blocki.block=='cart'" :data-bid="blocki.bid" :data-block="blocki.block" :blockdata="blocki"></xg-cart>
 			<xg-btns class="block block-btns" v-if="blocki.block=='btns'" :data-bid="blocki.bid" :data-block="blocki.block" :blockdata="blocki" :contdata="cont"></xg-btns>
 			<xg-btn class="block block-btn" v-if="blocki.block=='btn'" :data-bid="blocki.bid" :data-block="blocki.block" :blockdata="blocki" :contdata="cont"></xg-btn>
 			<xg-cate-list class="block cate-list" v-if="blocki.block=='cate-list'" :data-bid="blocki.bid" :data-block="blocki.block" :blockdata="blocki"></xg-cate-list>

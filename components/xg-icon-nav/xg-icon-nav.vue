@@ -1,8 +1,8 @@
 <template name="xg-icon-nav">
-	<view :style="root" class="icon-nav" :class="classnames">
+	<view :style="root" class="root" :class="classnames">
 		<view v-if="data" v-for="item,index in data" class="icon-nav-item" @click="linkclick" :data-link="item.link" :data-pagename="pagename" :style="(item.bg_color?'background-color:'+item.bg_color+';':'')">
 			<view v-if="item.font" class="icon-nav-icon xg-icon" :class="item.font" :style="(item.icon_color?'color:'+item.icon_color+';':'')"></view>
-			<img v-if="block.img" class="icon-nav-img" :src="block.img" />
+			<image v-if="item.img" class="icon-nav-img" mode="aspectFit" :src="item.img"></image>
 			<view class="icon-nav-text" :style="(item.text_color?'color:'+item.text_color+';':'')">{{item.title}}</view>
 		</view>
 	</view>
@@ -76,8 +76,9 @@
 </script>
 
 <style scoped>
-.icon-nav{display:flex;flex-wrap:wrap;margin:var(--block-margin);padding:var(--block-padding);border-radius:var(--block-radius);background-color:var(--block-bg-color);font-size:0.9rem;line-height:1em;}
+.root{display:flex;flex-wrap:wrap;margin:var(--block-margin);padding:var(--block-padding);border-radius:var(--block-radius);background:var(--block-bg);font-size:0.9rem;line-height:1em;}
 .icon-nav-item{width:calc(var(--icon-bg-width) - var(--icon-margin-left) - var(--icon-margin-right));height:var(--icon-bg-height);margin:var(--icon-bg-margin);padding:var(--icon-bg-padding);border-radius:var(--icon-bg-radius);text-align:center;box-sizing:border-box;}
-.icon-nav-icon{display:inline-block;width:'100%';border-radius:var(--icon-radius);font-size:var(--icon-width,'2rem');line-height:var(--icon-height,1em);text-align:center;margin:auto;}
+.icon-nav-icon{display:inline-block;width:'100%';border-radius:var(--icon-radius);font-size:var(--icon-width,2rem);line-height:var(--icon-height,1em);text-align:center;margin:auto;}
+.icon-nav-img{display:block;width:var(--icon-width,2rem);height:var(--icon-height,2rem);border-radius:var(--icon-radius);margin:auto;}
 .icon-nav-text{font-size:var(--block-fontsize,0.8rem);color:var(--text-color,#000)}
 </style>

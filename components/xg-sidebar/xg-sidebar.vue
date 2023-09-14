@@ -1,8 +1,8 @@
 <template>
 	<view :class="classnames">
-		<view :style="root" class="sidebar" v-if="barcates.length">
+		<view :style="root" class="sidebar">
 			<scroll-view class="bar-left" scroll-y="true" scroll-with-animation :scroll-into-view="'tab-'+curtab">
-				<view class="list" v-for="(item,index) in barcates" :key="index" @click="tabclick(index)" :id="'tab-'+index">
+				<view class="list" v-if="barcates.length" v-for="(item,index) in barcates" :key="index" @click="tabclick(index)" :id="'tab-'+index">
 					<view class="item" :class="{active:curtab==index}">{{item.text}}</view>
 				</view>
 			</scroll-view>
@@ -11,13 +11,9 @@
 					<xg-checkbox-picker ref="picker" :showbtn="0" mode="column" :datas="option" @change="opchange" v-if="option.length>1"></xg-checkbox-picker>
 					<xg-checkbox :theme_color="block.theme_color" :multiple="0" :showicon="0" :value="opvalue" mode="line" :datas="option[0]" @change="opchange" v-if="option.length===1"></xg-checkbox>
 				</view>
-				
-				<scroll-view scroll-y="true" class="bar-right-2" v-if="showlist2">
-					<view><image v-for="item,index in items" :src="fileurl(item)" mode="widthFix" class="image"></image></view>
-				</scroll-view>
-				<view v-if="!showlist2">
+				<view>
 					<scroll-view class="scroll-view" @scrolltolower="reachbottom" scroll-y="true" @scroll="scroll" :scroll-into-view="'bar-'+curitem" scroll-with-animation>
-						<view v-if="group" v-for="(item,index) in items" :key="index" :id="'bar-'+index">
+						<view v-if="group" v-for="(item,index) in conts" :key="index" :id="'bar-'+index">
 							<view class="title" v-if="item.title">{{item.title}}</view>
 							<view class="list">
 								<view class="item" v-for="(child,index2) in item.children" :key="index2" @click="linkclick" :data-link="linkdata(child,1)">
@@ -27,7 +23,7 @@
 							</view>
 						</view>
 						<view v-if="!group" class="list">
-							<view class="item" v-for="(item,index) in items" :key="index" @click="linkclick" :data-link="linkdata(item,1)">
+							<view class="item" v-for="(item,index) in conts" :key="index" @click="linkclick" :data-link="linkdata(item,1)">
 								<image class="image" mode="widthFix" :src="fileurl(item.img||item.pic)"></image>
 								<text class="text">{{item.title}}</text>
 							</view>
@@ -50,14 +46,15 @@
 				curitem:0,
 				barcates:[],
 				catekey:'',
-				items:[],
+				conts:[],
 				taburl:'',
 				option:[],
 				page:1,
 				opdata:{},
+				pid:0,
 				opvalue:0,
+				keywords:'',
 				group:false,
-				showlist2:false,
 			}
 		},
 		mounted(){
@@ -69,30 +66,26 @@
 				const s=this;
 				s.curtab=index;
 				s.opdata={};
-				s.opdata[s.topkey]=s.barcates[index].value;
-				if(s.items.length>1)s.curitem=index;
+			let firstid=s.opdata[s.topkey]=s.barcates[index].value;
+				if(s.conts.length>1)s.curitem=index;
 				s.page=1;
-				s.items=[];
-				if(s.block.sidebar_source=='cates'){
-					const pid=s.barcates[index].value;
-					const option=[];
-					let firstid=0;
-					option[0]=[];
-					for(let i in s.cates){
-						if(s.cates[i].pid==pid){
-							if(!firstid)firstid=s.cates[i].id;
-							option[0].push({text:s.cates[i].title,value:s.cates[i].id});
-						}
+				s.conts=[];
+				const pid=s.pid;
+				const option=[];
+				for(let j in s.cates){
+					if(firstid==s.cates[j].pid){
+						option[0]=option[0]||[];
+						option[0].push({text:s.cates[j].title,value:s.cates[j].id});
 					}
-					s.option=option;
-					s.opvalue=firstid;
-					s.opchange({key:s.cidname,value:firstid});
 				}
+				s.option=option;
+				s.opvalue=firstid;
+				s.opchange({key:s.cidname,value:firstid});
 			},
 			opchange:function(e){
 				const s=this;
 				s.page=1;
-				s.items=[];
+				s.conts=[];
 				if(!s.isobj(e)){
 					s.opdata[s.topkey]=e;
 				}else if(e.value){
@@ -100,47 +93,26 @@
 				}else if(e.key){
 					delete s.opdata[e.key];
 				}
-				s.requestlist();
+				s.keywords='';
+				s.getconts();
 			},
-			requestlist:function(){
+			getconts:function(){
 				const s=this;
 				if(!s.taburl){
 					s.taburl=s.url('app/index/data');
 				}
-				
 				const data={};
+				if(s.keywords)data.keywords=s.keywords;
 				data.page=s.page;
 				for(let i in s.opdata){
 					data[i]=s.opdata[i];
 				}
 				data['sys']=s.sys;
-				if(data.cid==33||data.cid==15||data.cid==24){
-					const items=[];
-					if(data.cid==33){
-						var i1=1;
-						var i2=20;
-					}else if(data.cid==15){
-						var i1=21;
-						var i2=40;
-					}else if(data.cid==24){
-						var i1=41;
-						var i2=60;
-					}
-					var i1=1;
-					var i2=60;
-					for(let i=i1;i<=i2;i++){
-						items.push('/upload/tuce/'+i+'a.jpg');
-						items.push('/upload/tuce/'+i+'b.jpg');
-					}
-					s.showlist2=true;
-					s.items=items;
-					return;
-				}
-				s.showlist2=false;
 				s.request({url:s.taburl,data:data,success:function(res){
+					res=res.data||res;
 					if(s.isarr(res)){
 						for(let i in res){
-							s.items.push(res[i]);
+							s.conts.push(res[i]);
 						}
 					}
 				}});
@@ -157,30 +129,45 @@
 				if(!s.barcates.length){
 					isinit=true;
 				}
-				if(s.block.sidebar_source=='cates'){
-					s.topkey=s.cidname;
-					if(s.block.sidebar_data)s.block.pid=s.block.sidebar_data;
-					if(s.block.pid){
-						const barcates=[];
-						for(let i in s.cates){
-							if(s.cates[i].pid==s.block.pid){
-								barcates.push({text:s.cates[i].title,value:s.cates[i].id,order:s.cates[i].order});
-							}
-						}
-						barcates.sort(function(a, b) {
-							return a.order - b.order;
-						});
-						s.barcates=barcates;
+				s.topkey=s.cidname;
+				if(s.block.sidebar_source=='costom')s.pid=s.block.sidebar_data;
+				if(s.block.sidebar_source=='opcate')s.pid=s.options.cid;
+				if(s.block.sidebar_source=='cate'){
+					if(s.options.cid){
+						s.pid=s.options.cid;
+					}else{
+						s.pid=s.block.sidebar_data;
 					}
 				}
-				if(isinit&&s.barcates.length){
-					s.tabclick(0);
+				if(s.pid){
+					const barcates=[];
+					for(let i in s.cates){
+						if(s.cates[i].pid==s.pid){
+							barcates.push({text:s.cates[i].title,value:s.cates[i].id,order:s.cates[i].order});
+						}
+					}
+					barcates.sort(function(a, b) {
+						return a.order - b.order;
+					});
+					s.barcates=barcates;
+				}
+				if(isinit){
+					if(s.barcates.length)s.tabclick(0);
+					s.o(`xg-search`,function(keywords){
+						if(s.keywords!=keywords){
+							s.conts=[];
+							s.page=1;
+							s.g.options.page=1;
+							s.keywords=keywords;
+						}
+						s.getconts();
+					});
 				}
 			},
 			reachbottom:function(){
 				const s=this;
 				s.page++;
-				s.requestlist();
+				s.getconts();
 			}
 		},
 		computed:{
@@ -220,7 +207,7 @@
 	--bar-right-height:calc(var(--bar-height) - var(--bar-holder-option));
 	display:flex;width:100%;height:var(--bar-height,100%);overflow:hidden;
 }
-.bar-left{width:var(--bar-width,10rem);height:var(--bar-height,100%);background:#f7f7f7;padding-top:0.25rem;box-sizing:border-box;}
+.bar-left{width:var(--bar-width,10rem);height:var(--bar-height,100%);background:var(--theme-color2,#f7f7f7);padding-top:0.25rem;box-sizing:border-box;}
 .bar-left .item{display:flex;padding-left:1.2rem;height:var(--bar-item-height,2.5rem);font-size:var(--bar-item-fontsize,0.85rem);line-height:var(--bar-item-height,2.5rem);}
 .bar-left .item.active{padding-left:0.95rem;border-left:solid 0.25rem var(--theme-color);color:var(--theme-color);}
 .bar-right{width:calc(100% - var(--bar-width,10rem));}

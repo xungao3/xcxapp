@@ -450,7 +450,7 @@ s.datas=function(){
 				s.cont=data;
 				if(data.title)uni.setNavigationBarTitle({title:data.title});
 				// #ifdef MP-BAIDU
-				s.setbdinfo();
+				// s.setbdinfo();
 				// #endif
 				for(let i in blocks){
 					let block=blocks[i];

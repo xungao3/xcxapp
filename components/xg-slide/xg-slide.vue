@@ -44,10 +44,28 @@
 				const list=s.block.list;
 				if(s.block.height)s.height=s.block.height;
 				const items=[];
-				if(s.block.custom){
-					for(let i in s.block.custom){
-						items.push(s.block.custom[i]);
+				if(s.block.source=='custom'){
+					const block=s.block;
+					const cates=[];
+					for(let cate of s.block.data){
+						cates.push(cate[cate.key]);
 					}
+					const name=block.bid+'-'+cates.join(',');
+					const file=s.cachepath(name,'custom',s.sys);
+					const param={cid:cates.join(','),bid:s.block.bid,sys:s.sys,count:s.block.show_count};
+					s.request({url:s.url(file,param),success:function(data){
+						if(s.isarr(data)){
+							const list=data;
+							for(let i in list){
+								list[i].left=s.blockinfo(s.block.info_left||s.block.bottom_left,list[i]);
+								list[i].right=s.blockinfo(s.block.info_right||s.block.bottom_right,list[i]);
+							}
+							s.items=list;
+						}else if(s.isobj(data)&&data.block=='slide'){
+							s.items=data.list;
+						}
+					}});
+					return;
 				}
 				if(s.block.list){
 					for(let i in s.block.list){
@@ -114,8 +132,8 @@
 </script>
 
 <style scoped>
-.slide{}
-.slide .swiper{width:calc(100% - var(--block-margin-left) - var(--block-margin-right));margin:var(--block-margin);--text-color:#000;color:var(--text-color);border-radius:var(--block-radius);height:var(--height);overflow:hidden;}
+.slide{overflow:hidden;max-height:var(--height);}
+.slide .swiper{width:calc(100% - var(--block-margin-left) - var(--block-margin-right));margin:var(--block-margin);--text-color:#000;color:var(--text-color);border-radius:var(--block-radius);height:var(--height);max-height:var(--height);overflow:hidden;}
 .slide .title-top{top:0;bottom:auto;}
 .slide .title-bottom{bottom:0;}
 .slide .title-middle{top:calc(50% - 1.5rem)}

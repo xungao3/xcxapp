@@ -6,6 +6,10 @@
      	{
      		"launchtype" : "local"
      	},
+     	"mp-baidu" : 
+     	{
+     		"launchtype" : "local"
+     	},
      	"mp-weixin" : 
      	{
      		"launchtype" : "local"

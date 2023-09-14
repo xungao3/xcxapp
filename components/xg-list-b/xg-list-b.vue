@@ -69,13 +69,14 @@
 	overflow:hidden;
 	float:left;
 	width:40%;
-	height:var(--block-img-height,6rem);
+	max-height:var(--block-img-height,6rem);
 	border-radius:0.3rem;
 }
 .left .image{
 	display:block;
 	width:100%;
 	height:var(--block-img-height,auto);
+	border-radius:0.3rem;
 }
 .right{
 	display:flex;

@@ -129,7 +129,7 @@
 		}
 	}
 </script>
-<style>
+<style scoped>
 .root{display:flex;width:100%;}
 .group{display:flex;width:100%;flex-shrink:1;flex-wrap:wrap;padding:0.15rem;font-size:0.85rem;line-height:0.95rem;box-sizing:border-box;align-items:center;box-sizing:border-box;}
 .group .box{display:flex;padding:var(--block-padding,0.5rem);}

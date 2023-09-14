@@ -1,6 +1,6 @@
 <template name="xg-image">
 	<view v-if="block.picurl&&!varurl" @click="linkclick" class="xg-image" :class="[block.classnames,classnames]" :style="[root,block.styles]">
-		<image class="image" :src="block.picurl"></image>
+		<image class="image" :mode="mode" :src="block.picurl"></image>
 	</view>
 </template>
 
@@ -12,6 +12,7 @@
 			return {
 				xgname: "xg-image",
 				varurl:true,
+				mode:'aspectFit'
 			}
 		},
 		methods:{

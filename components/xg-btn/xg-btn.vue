@@ -1,9 +1,9 @@
 <template name="xg-btns">
 	<view :class="classnames" :style="root">
-		<button :class="'xg-btn xg-btn-'+(block.btn_size=='small'?'s':(block.btn_size=='large')?'l':'')" v-if="actname=='share'" open-type="share">
+		<button :class="'xg-btn '+(block.btn_size=='small'?'xg-btn-s':(block.btn_size=='large')?'xg-btn-l':'')" v-if="actname=='share'" open-type="share">
 			<view class="xg-icon" :class="block.btn_icon" v-if="block.btn_icon"></view>{{text}}
 		</button>
-		<button :class="'xg-btn xg-btn-'+(block.btn_size=='small'?'s':(block.btn_size=='large')?'l':'')" v-else @click="execute">
+		<button :class="'xg-btn '+(block.btn_size=='small'?'xg-btn-s':(block.btn_size=='large')?'xg-btn-l':'')" v-else @click="execute">
 			<view class="xg-icon" :class="block.btn_icon" v-if="block.btn_icon"></view>{{text}}
 		</button>
 	</view>
@@ -22,7 +22,7 @@
 			}
 		},
 		methods:{
-			init:function(){
+			render:function(){
 				const s=this;
 				s.actname=s.block.btn_action;
 				//s.actname='downopen';
@@ -47,7 +47,7 @@
 			execute:function(){
 				const s=this;
 				const blocks=[];
-				const cont=s.blockinfo(s.block.btn_action_content||'',s.info||{});
+				const cont=s.blockinfo(s.block.btn_action_content||'',s.cont||{});
 				if(s.actname=='star'){
 					s.addstar();
 				}else if(s.actname=='download'||s.actname=='downopen'){
@@ -59,6 +59,16 @@
 						}
 					});
 				}else if(s.actname=='upload'){
+					console.log('todo');
+				}else if(s.actname=='fun'){
+					const regex = /([a-zA-Z_]+)\((.*)\)/;
+					const match = cont.match(regex);
+					if (match) {
+					  const functionName = match[1];
+					  const argsString = match[2];
+					  const args = argsString;
+					  s[functionName](...args);
+					}
 				}
 			},
 			addstar:function(){
@@ -94,7 +104,7 @@
 		mounted:function(){
 			const s=this;
 			s.xginit();
-			s.init();
+			s.render();
 		},
 		onShareAppMessage(){
 			const s=this;
