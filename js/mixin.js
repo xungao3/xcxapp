@@ -191,7 +191,7 @@ const mixin={
 				let key,val,data;
 				key=d.key.split('.');
 				val=d.val;
-				block=d.block;
+				let block=d&&d.block;
 				if(!block||block==s.xgname||'xg-'+block==s.xgname){
 					const vname=key[0];
 					const kname=key[1];

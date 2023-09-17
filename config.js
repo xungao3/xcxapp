@@ -1,5 +1,5 @@
 const s={};
-s.xgurl='https://e.xg3.cn';
+s.xgurl='https://demo.e.xg3.cn';
 // #ifdef H5
 //s.xgurl='http://esite.com';
 // #endif

@@ -56,9 +56,9 @@
 </script>
 
 <style scoped>
-.root{background:var(--block-bg);width:100%;}
-.view{width:var(--block-width);height:var(--block-height);margin:var(--block-margin);padding:var(--block-padding);border-radius:var(--block-radius);border:var(--block-border);font-size:var(--block-fontsize);font-weight:var(--block-weight);}
-.main{display:flex;width:100%;border:solid 1px var(--theme-color);border-radius:1rem;overflow:hidden;box-sizing:border-box;}
-.input{display:block;width:calc(100% - 2rem);height:2rem;font-size:var(--block-fontsize,0.9rem);font-weight:var(--block-weight);background:rgba(0,0,0,0);border:0;padding:0.25rem 0.9rem;line-height:1.5rem;}
+.root{background:var(--block-bg);width:var(--block-width);}
+.view{width:calc(100% - 0.85rem);height:var(--block-height);margin:var(--block-margin);padding:var(--block-padding);border-radius:var(--block-radius);border:var(--block-border);font-size:var(--block-fontsize);font-weight:var(--block-weight);}
+.main{display:flex;width:calc(100% - 2px);border:solid 1px var(--theme-color);border-radius:1rem;overflow:hidden;box-sizing:border-box;}
+.input{display:block;width:calc(100% - 2rem);height:2rem;font-size:var(--block-fontsize,0.9rem);font-weight:var(--block-weight);background:rgba(0,0,0,0);border:0;padding:0.25rem 0.9rem;line-height:1.5rem;box-sizing:border-box;}
 .button{font-size:1.3em;width:2rem;color:var(--theme-color);text-align:center;line-height:2rem;}
 </style>
