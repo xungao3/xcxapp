@@ -189,35 +189,33 @@ const mixin={
 			s.page=s.options.page||s.page;
 			s.o('xg-emit',function(d){
 				let key,val,data;
-				if(s.isobj(d)&&s.isstr(d.key)){
-					key=d.key.split('.');
-					val=d.value;
-				}else if(s.isarr(d)&&s.isstr(d[0])){
-					key=d[0].split('.');
-					val=d[1];
-				}
-				const vname=key[0];
-				const kname=key[1];
-				if(vname=='on'&&s.on){
-					data=s.on;
-				}else if(vname=='cont'&&s.cont){
-					data=s.cont;
-				}else if(vname=='conts'&&s.conts){
-					data=s.conts;
-				}else if(vname=='block'&&s.block){
-					data=s.block;
-				}
-				if(data){
-					if(s.isunde(val)){
-						if(data[kname]){
-							val=false;
-						}else{
-							val=true;
-						}
+				key=d.key.split('.');
+				val=d.val;
+				block=d.block;
+				if(!block||block==s.xgname||'xg-'+block==s.xgname){
+					const vname=key[0];
+					const kname=key[1];
+					if(vname=='on'&&s.on){
+						data=s.on;
+					}else if(vname=='cont'&&s.cont){
+						data=s.cont;
+					}else if(vname=='conts'&&s.conts){
+						data=s.conts;
+					}else if(vname=='block'&&s.block){
+						data=s.block;
 					}
-					data[kname]=val;
-					if(s.block.show){
-						s.block.show='1&&'+s.block.show;
+					if(data){
+						if(s.isunde(val)){
+							if(data[kname]){
+								val=false;
+							}else{
+								val=true;
+							}
+						}
+						data[kname]=val;
+						if(s.block.show){
+							s.block.show='1&&'+s.block.show;
+						}
 					}
 				}
 			});
@@ -227,7 +225,13 @@ const mixin={
 			if(s.block&&s.block.emit){
 				const arr=s.block.emit.split(';');
 				for(let i of arr){
-					const data=i.split('=');
+					let block;
+					if(i.includes('@')){
+						block=i.split('@')[0];
+						i=i.split('@')[1];
+					}
+					let arri=i.split('=');
+					const data={block,key:arri[0],val:arri[1]};
 					s.o('xg-emit',data);
 				}
 				return;
@@ -239,6 +243,13 @@ const mixin={
 					e[data[i]]=s.cont[data[i]];
 				}
 				e=s.linkdata(e);
+			}
+			if(s.block&&s.block.link){
+				let link=s.block.link;
+				if(s.cont){
+					link=s.blockinfo(s.block.link,s.cont);
+				}
+				e=link;
 			}
 			s.link(e);
 		}
@@ -269,6 +280,7 @@ const mixin={
 				if(n){
 					if(n.cateid&&n.cateid.cid)n.cateid=n.cateid.cid;
 					s.block=n;
+					if(n.classnames)s.classnames.push(n.classnames);
 					if(s.isfun(s.render))s.render();
 					s.hooks('block-mutated',s,n.bid);
 				}
@@ -366,6 +378,7 @@ const mixin={
 				style['--block-margin-right']='0px';
 			}
 			if(block.theme_color)style['--theme-color']=block.theme_color;
+			if(block.theme_color2)style['--theme-color2']=block.theme_color2;
 			if(block.z_index)style['--block-z-index']=block.z_index;
 			if(block.border)style['--block-border']=block.border;
 			if(block.weight)style['--block-weight']=block.weight;

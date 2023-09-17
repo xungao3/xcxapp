@@ -62,7 +62,7 @@
 					}
 					s.request({url:s.url('app/index/search',{sys:s.sys,cid:s.cid,page:s.page,pagesize:s.block.pagesize,keywords}),success:function(data){
 						s.countdata=0;
-						s.conts=data.data;
+						s.conts=s.bottominfo(data.data);
 					},dataType:'json'});
 				});
 				s.o(`reachbottom`,function(){

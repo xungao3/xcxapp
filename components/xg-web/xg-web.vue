@@ -1,6 +1,6 @@
 <template name="xg-web">
-	<view>
-		<web-view v-if="src" :src="fileurl(src)" controls></web-view>
+	<view :class="classnames" :style="root">
+		<web-view class="web" v-if="src" :src="fileurl(src)"></web-view>
 	</view>
 </template>
 
@@ -18,7 +18,6 @@
 			render:function(){
 				const s=this;
 				s.src=s.blockinfo(s.block.src,s.cont);
-				console.log(s.src,s.block.src,s.cont);
 			},
 			init:function(){
 				const s=this;
@@ -41,4 +40,5 @@
 </script>
 
 <style scoped>
+.web{width:100vw;height:100vh;}
 </style>

@@ -1,5 +1,8 @@
 <template name="xg-custom">
-	<view :class="classnames"><view v-if="showself" :style="[root,block.styles]" class="content" @click.stop="itemclick">{{custom}}</view></view>
+	<view :class="classnames">
+		<view v-if="showself&&block.link" :style="[root,block.styles]" class="content" @click="linkclick">{{custom}}</view>
+		<view v-if="showself&&!block.link" :style="[root,block.styles]" class="content" @click.stop="itemclick">{{custom}}</view>
+	</view>
 </template>
 
 <script>

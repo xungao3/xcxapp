@@ -33,18 +33,19 @@
 		methods:{
 			render:function(){
 				const s=this;
-				if(s.cateid){
+				if(s.block.list_url){
+					s.request({url:s.url(s.block.list_url),success:function(data){
+						const list=s.bottominfo(data.list||data);
+						s.list=list;
+					},dataType:'json'});
+				}else if(s.cateid){
 					const block=s.block;
 					const name=block.bid+'-'+s.cateid;
 					const file=s.cachepath(name,'custom',s.sys);
 					const param={cid:s.cateid,bid:s.block.bid,sys:s.sys,count:s.block.show_count};
 					s.request({url:s.url(file,param),success:function(data){
 						if(s.isarr(data)){
-							const list=data;
-							for(let i in list){
-								list[i].left=s.blockinfo(s.block.info_left||s.block.bottom_left,list[i]);
-								list[i].right=s.blockinfo(s.block.info_right||s.block.bottom_right,list[i]);
-							}
+							const list=s.bottominfo(data.list||data);
 							s.list=list;
 						}else if(s.isobj(data)&&data.block=='cate-box'){
 							s.block=data;
@@ -57,15 +58,11 @@
 							s.block.toplink=s.block.toplink[0];
 						}
 					}
-					s.cont_style=(s.block.cont_list_style||{});
-					s.box_style=(s.block.box_style||{});
-					const list=s.block.list;
-					for(let i in list){
-						list[i].left=s.blockinfo(s.block.info_left||s.block.bottom_left,list[i]);
-						list[i].right=s.blockinfo(s.block.info_right||s.block.bottom_right,list[i]);
-					}
+					const list=s.bottominfo(s.block.list);
 					s.list=list;
 				}
+				s.cont_style=(s.block.cont_list_style||{});
+				s.box_style=(s.block.box_style||{});
 			}
 		},
 		computed:{

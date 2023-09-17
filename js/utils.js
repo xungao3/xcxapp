@@ -340,7 +340,18 @@ function loading(i){
 
 
 function format(info,type,nozero){
-	if(typeof info=='string')info=parseInt(info);
+	if(typeof info=='string'){
+		if(info.includes('-')||info.includes(':')){
+			try{
+				info=Date.parse(info);
+			}catch(e){
+				info=parseInt(info);
+			}
+		}else{
+			info=parseInt(info);
+		}
+		
+	}
 	if (typeof info == 'number' && info<100000000000) {
 		info=info*1000;
 	}

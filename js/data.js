@@ -316,23 +316,83 @@ s.rehtml=function(html){
 	html=htmlstyle(html,pstyle,imgstyle);
 	return html ;
 };
+
+
+
+s.bottominfo=function(list){
+	const s=this;
+	if(s.isarr(list)&&s.block){
+		for(let i in list){
+			list[i].left=s.blockinfo(s.block.info_left||s.block.bottom_left,list[i]);
+			list[i].right=s.blockinfo(s.block.info_right||s.block.bottom_right,list[i]);
+		}
+	}
+	return list;
+}
+
 s.blockinfo=function(text,info){
 	const s=this;
 	if(text&&s.isstr(text)){
 		text=text.replace(new RegExp('(\\\[[a-z0-9A-Z\.\_]+\\\])', 'gm'),function(match,a,b) {
 			var tag=match.replace('[','').replace(']','');
+			if(tag.substr(0,5)=='time.')return s.format(info['timestamp']||info['news_time']||info['newstime'],tag.substr(5).split(''));
+			if(tag.includes('.')){
+				let taga=tag.split('.');
+				let info2=info;
+				if(taga[0]=='block'||taga[0]=='conts'||taga[0]=='cont'||taga[0]=='options'){
+					info2=s;
+				}
+				for(let tagi of taga){
+					if(info2&&info2[tagi]){
+						info2=info2[tagi];
+					}else{
+						info2='';
+					}
+				}
+				return info2;
+			}
 			if(tag=='date')return s.format(info['timestamp']||info['news_time']||info['newstime'],0);
 			if(tag=='time')return s.format(info['timestamp']||info['news_time']||info['newstime'],1);
 			if(tag=='datetime')return s.format(info['timestamp']||info['news_time']||info['newstime'],2);
-			if(tag.substr(0,5)=='time.')return s.format(info['timestamp']||info['news_time']||info['newstime'],tag.substr(5).split(''));
 			return (info[tag]?info[tag]:'');
 		});
 		text=text.replace('&amp;','&').replace('&copy;','©');
+		if(text&&s.extrfuncs(text).length){
+			for(let extr of s.extrfuncs(text)){
+				if(s.isfun(s[extr.func])){
+					const args=extr.args;
+					const exec=s[extr.func](...args);
+					text=text.replace(extr.str,exec);
+				}
+			}
+		}
 	}
 	return text;
 };
+//提取函数
+s.extrfuncs=function(input){
+	const regex = /(\w+)\(([^)]*)\)/g;
+	const matches = [];
+	let match;
+	while ((match = regex.exec(input)) !== null) {
+		const str=match[0];
+		const func = match[1];
+		const argsString = match[2];
+		const args = argsString.split(',').map(arg => arg.trim());
+		matches.push({str,func,args});
+	}
+	return matches;
+}
 
-
+s.addtocart=function(cid,id){
+	const s=this;
+	s.request({url:s.url('app/index/cart',{sys:s.sys,cid,id}),success:function(res){
+		if(res.ok===true){
+			s.o('add-to-cart-ok',{cid,id});
+		}
+		if(res.msg)s.msg(res.msg);
+	},dataType:'json'});
+}
 
 s.cont=function(cont){
 	const s=this;
@@ -360,7 +420,8 @@ s.getconts=function(data){
 	const cid=s.cid;
 	let param=s.urldata(s.options);
 	data=data||{};
-	let page=s.page||1;
+	let page=s.options.page||s.page||1;
+	console.log(s.options);
 	let pagesize;
 	pagesize=(s.block&&s.block.pagesize)||10;
 	let count=s.count||0;
@@ -374,6 +435,7 @@ s.getconts=function(data){
 	let file=s.cachepath(name,'contents',sys);
 	s.conts=s.conts||[];
 	s.request({url:s.url(file,param),data:data,success:function(data){
+		data=s.bottominfo(data.list||data);
 		for(let i in data){
 			s.conts.push(data[i]);
 		}
@@ -425,6 +487,7 @@ s.datas=function(){
 		initdatas();
 	}
 	s.reload=function(){
+		s.g.datas={};
 		s.request({url:s.url('index/sets',{thid}),success:function(data){
 			s.g.datas=data;
 			initdatas();
@@ -445,7 +508,7 @@ s.datas=function(){
 		if(s.id&&s.cid){
 			let param=s.extend({thid:s.g.datas.thid,sys:s.sys},s.urldata(s.options));
 			let name=s.id;
-			let file=s.cachepath(name,'xg-'+s.model,s.sys);
+			let file=s.cachepath(name,s.sys+'-'+s.model,s.sys);
 			s.request({url:s.url(file,param),success:function(data){
 				s.cont=data;
 				if(data.title)uni.setNavigationBarTitle({title:data.title});
@@ -458,7 +521,7 @@ s.datas=function(){
 				}
 			},dataType:'json'});
 		}else if(s.cid){
-			uni.setNavigationBarTitle({title:s.cates[s.cid].title});
+			if(s.cates&&s.cates[s.cid])uni.setNavigationBarTitle({title:s.cates[s.cid].title});
 			s.getconts();
 		}
 		for(let i in blocks){
